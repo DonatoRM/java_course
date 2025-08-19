@@ -22,3 +22,17 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Carpetas de compilación de Maven/Gradle
+target/
+build/
+
+# Configuración de IDEs
+.idea/
+.vscode/
+*.iml
+
+# Eclipse
+*.classpath
+*.project
+*.settings/
