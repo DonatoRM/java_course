@@ -10,18 +10,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale.Category;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import es.donatodev.java.jdbc.modelo.Categoria;
 import es.donatodev.java.jdbc.modelo.Producto;
+import static es.donatodev.java.jdbc.repositorio.Messages.*;
 
 public class ProductoRepositorioImpl implements Repositorio<Producto> {
     private final Connection conn;
     private static final Logger LOGGER=Logger.getLogger(ProductoRepositorioImpl.class.getName());
     // Constantes SQL movidas a SqlQueries.java
-    private static final String MSG_LIST_OK="Se ha listado correctamente los productos";
+    // Mensajes movidos a Messages.java
 
     public ProductoRepositorioImpl(Connection conn) {
         this.conn = conn;
@@ -38,6 +38,7 @@ public class ProductoRepositorioImpl implements Repositorio<Producto> {
                 productos.add(producto);
             }
         } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE,MSG_LIST_WRONG);
             e.printStackTrace();
         }
         LOGGER.log(Level.INFO,MSG_LIST_OK);
@@ -56,6 +57,7 @@ public class ProductoRepositorioImpl implements Repositorio<Producto> {
                 }
             }
         } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE,MSG_FOR_ID_WRONG);
             e.printStackTrace();
         }
         return producto;
@@ -82,6 +84,11 @@ public class ProductoRepositorioImpl implements Repositorio<Producto> {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
+            if(sql.equals(SQL_GUARDAR)) {
+                LOGGER.log(Level.SEVERE,MSG_INSERT_FOR_ID_WRONG);
+            } else {
+                LOGGER.log(Level.SEVERE,MSG_UPDATE_FOR_ID_WRONG);
+            }
             e.printStackTrace();
         }
     }
@@ -91,10 +98,13 @@ public class ProductoRepositorioImpl implements Repositorio<Producto> {
     try(PreparedStatement stmt=conn.prepareStatement(SQL_ELIMINAR)) {
             stmt.setLong(1, id);
             stmt.executeUpdate();
+            LOGGER.log(Level.SEVERE,MSG_DELETE_FOR_ID_OK);
         } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE,MSG_DELETE_FOR_ID_WRONG);
             e.printStackTrace();
         }
     }
+
     private Producto crearProducto(ResultSet rs) throws SQLException {
         Producto p = new Producto();
         p.setId(rs.getLong("id"));
